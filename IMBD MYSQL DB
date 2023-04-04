@@ -1,67 +1,81 @@
 CREATE DATABASE IMBD;
 
 CREATE TABLE Movie (
-  id INT,
-  title VARCHAR(255),
-  release_date DATE,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  release_date DATE NOT NULL,
   plot TEXT,
   runtime INT,
   language VARCHAR(50),
   country VARCHAR(50),
-  );
+  box_office DECIMAL(10, 2),
+  imdb_rating DECIMAL(3, 1)
+);
 
 CREATE TABLE Media (
-  id INT,
-  movie_id INT,
-  type ENUM('Video', 'Image'),
-  url VARCHAR(255),
-  );
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  movie_id INT NOT NULL,
+  type ENUM('Video', 'Image') NOT NULL,
+  url VARCHAR(255) NOT NULL,
+  FOREIGN KEY (movie_id) REFERENCES Movie(id) ON DELETE CASCADE
+);
 
 CREATE TABLE Genre (
-  id INT,
-  name VARCHAR(50) 
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE MovieGenre (
-  movie_id INT,
-  genre_id INT,
+  movie_id INT NOT NULL,
+  genre_id INT NOT NULL,
+  PRIMARY KEY (movie_id, genre_id),
+  FOREIGN KEY (movie_id) REFERENCES Movie(id) ON DELETE CASCADE,
+  FOREIGN KEY (genre_id) REFERENCES Genre(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Review (
-  id INT,
-  movie_id INT,
-  user_id INT,
-  rating DECIMAL(2, 1),
-  comment TEXT
-  );
-  
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  movie_id INT NOT NULL,
+  user_id INT NOT NULL,
+  rating DECIMAL(2, 1) NOT NULL,
+  comment TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (movie_id) REFERENCES Movie(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+);
+
 CREATE TABLE User (
-  id INT,
-  name VARCHAR(50),
-  email VARCHAR(255),
-  password VARCHAR(255)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Artist (
-  id INT,
-  name VARCHAR(50),
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
   birth_date DATE,
   bio TEXT
 );
 
 CREATE TABLE Skill (
-  id INT,
-  name VARCHAR(50)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE ArtistSkill (
   artist_id INT NOT NULL,
   skill_id INT NOT NULL,
-  );
+  PRIMARY KEY (artist_id, skill_id),
+  FOREIGN KEY (artist_id) REFERENCES Artist(id) ON DELETE CASCADE,
+  FOREIGN KEY (skill_id) REFERENCES Skill(id) ON DELETE CASCADE
+);
 
 CREATE TABLE MovieArtist (
-  id INT,
-  movie_id INT,
-  artist_id INT,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  movie_id INT NOT NULL,
+  artist_id INT NOT NULL,
   role VARCHAR(50),
-  );
+  FOREIGN KEY (movie_id) REFERENCES Movie(id) ON DELETE CASCADE,
+  FOREIGN KEY (artist_id) REFERENCES Artist(id) ON DELETE CASCADE
+);
