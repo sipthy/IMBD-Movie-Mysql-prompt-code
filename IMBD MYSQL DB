@@ -1,3 +1,5 @@
+CREATE DATABASE IMBD;
+
 CREATE TABLE Movie (
   id INT,
   title VARCHAR(255),
